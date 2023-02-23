@@ -34,4 +34,5 @@
 # Other
 CMakeCache.txt
 .idea/
+cmake-build-debug/
 build/
