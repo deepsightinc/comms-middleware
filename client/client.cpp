@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include "Comms.h"
 
 #include <popl.h>
 
@@ -15,12 +16,27 @@ int main(int argc, char** argv) {
     auto port_option  = op.add<popl::Value<int>>("p", "port", "port of server to connect to" );
     op.parse(argc, argv);
 
-    // print auto-generated help message
     if (help_option->is_set())
         std::cout << op << std::endl;
 
     if(!ip_option->is_set() || !port_option->is_set() ) {
         std::cout << "Error: Missing required arguments" << std::endl;
         std::exit(0);
+    }
+
+    Comms middleware({});
+    SubscriberPtr subscriber = middleware.CreateSubscriber("test_topic", "127.0.0.1", 5000);
+
+    if(subscriber->Init() != Status::OK) {
+        std::cout << "Publisher failed to initialize" << std::endl;
+        return 0;
+    }
+
+    while(true) {
+        auto maybeMessage = subscriber->GetMessage();
+        if(maybeMessage) {
+            std::cout << "received message: " + maybeMessage.value() << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds{30});
     }
 }
