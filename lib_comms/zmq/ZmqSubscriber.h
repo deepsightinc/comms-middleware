@@ -13,7 +13,7 @@ namespace zmq {
 
 class ZmqSubscriber: public Subscriber {
 public:
-    ZmqSubscriber(std::string ipAddress, int port);
+    ZmqSubscriber(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
     ~ZmqSubscriber();
 
     Status Init() override;
@@ -23,7 +23,7 @@ private:
     std::string m_ip;
     int m_port;
 
-    std::unique_ptr<zmq::context_t> m_context;
+    std::shared_ptr<zmq::context_t> m_context;
     std::unique_ptr<zmq::socket_t> m_socket;
 };
 

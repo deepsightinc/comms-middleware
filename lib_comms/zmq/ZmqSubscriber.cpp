@@ -3,8 +3,8 @@
 #include "ZmqSubscriber.h"
 #include "zmq.hpp"
 
-ZmqSubscriber::ZmqSubscriber(std::string ipAddress, int port) :
-    m_context(std::make_unique<zmq::context_t>()),
+ZmqSubscriber::ZmqSubscriber(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
+    m_context(context),
     m_socket(std::make_unique<zmq::socket_t>(*m_context, zmq::socket_type::sub)),
     m_ip(ipAddress), m_port(port){}
 

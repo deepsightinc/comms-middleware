@@ -30,7 +30,7 @@ cmake --build .
 * Make subscriber threadsafe
 * Test out inproc transport
 * Protobuf payloads
-* Shared context for publishers (and subscribers?)
+* ~~Shared context for publishers (and subscribers?)~~
 * Forwarder pattern for publishers
 * Complete server and client example
 * Test compilation with aarch64 compiler
