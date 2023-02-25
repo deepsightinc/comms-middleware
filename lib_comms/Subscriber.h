@@ -17,7 +17,6 @@ class Subscriber {
 public:
     virtual Status Init() = 0;
     virtual std::optional<Message> GetMessage() = 0;
-    virtual std::optional<Messages> GetMessages() = 0;
 };
 using SubscriberPtr = std::unique_ptr<Subscriber>;
 

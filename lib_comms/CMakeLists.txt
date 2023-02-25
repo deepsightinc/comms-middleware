@@ -6,7 +6,8 @@ set(HEADER_LIST
         PubSubBackend.h
         zmq/ZmqPublisher.h
         zmq/ZmqPubSubBackend.h
-        zmq/ZmqSubscriber.h)
+        zmq/ZmqSubscriber.h
+        ThreadSafeQueue.h)
 
 set(SOURCE_LIST
         Comms.cpp

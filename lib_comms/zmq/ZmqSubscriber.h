@@ -3,8 +3,12 @@
 
 #include "CommsTypes.h"
 #include "Subscriber.h"
+#include "ThreadSafeQueue.h"
 
 #include <memory>
+#include <thread>
+#include <queue>
+#include <atomic>
 
 namespace zmq {
     class context_t;
@@ -18,13 +22,16 @@ public:
 
     Status Init() override;
     std::optional<Message> GetMessage() override;
-    std::optional<Messages> GetMessages() override;
 private:
+    void SubscriberLoop();
     std::string m_ip;
     int m_port;
 
     std::shared_ptr<zmq::context_t> m_context;
-    std::unique_ptr<zmq::socket_t> m_socket;
+
+    std::atomic_bool m_cancelThread = false;
+    std::thread m_subscriberThread;
+    ThreadSafeQueue<std::string> m_queue;
 };
 
 #endif //COMMS_MIDDLEWARE_ZMQSUBSCRIBER_H

@@ -26,15 +26,18 @@ cmake --build .
 ````
 
 ## TODO
-* Make publisher threadsafe
-* Make subscriber threadsafe
+* Make publisher threadsafe 
+* ~~Make subscriber threadsafe~~
 * Test out inproc transport
+* Compile-time topic generation
 * Protobuf payloads
 * ~~Shared context for publishers (and subscribers?)~~
 * Forwarder pattern for publishers
+* Forwarder pattern for subscribers?
 * Complete server and client example
 * Test compilation with aarch64 compiler
-* Tests:
+* Teston Kir
+* Tests to add:
   * Multiple publishers + Single subscribers
   * Multiple subscribers + single publishers
   * Multiple publishers + consumer
