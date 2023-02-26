@@ -18,12 +18,14 @@ namespace zmq {
 class ZmqSubscriber: public Subscriber {
 public:
     ZmqSubscriber(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
-    ~ZmqSubscriber();
+    ~ZmqSubscriber() override;
 
     Status Init() override;
     std::optional<Message> GetMessage() override;
 private:
     void SubscriberLoop();
+
+    std::atomic_bool m_initialized = false;
     std::string m_ip;
     int m_port;
 

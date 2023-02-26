@@ -11,6 +11,8 @@ namespace zmq {
 class ZmqPubSubBackend: public PubSubBackend {
 public:
     ZmqPubSubBackend();
+    ~ZmqPubSubBackend() override = default;
+
     Status Init() override;
     PublisherPtr CreatePublisher(const Topic& topic, const IpAddress& address, const Port& port) override;
     SubscriberPtr CreateSubscriber(const Topic& topic, const IpAddress& address, const Port& port) override;

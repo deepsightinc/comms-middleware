@@ -9,7 +9,9 @@ example client and server that uses the library to communicate.
 ### Prerequisites  
 * Host machine must run Ubuntu 22.04 and have a compiler supporting C++17  
 * Install the necessary packages:
-`sudo apt-get install libzmq3-dev googletest`
+`sudo apt-get install googletest`
+  * Download and install ZMQ package here:
+  https://mirrorcache-us.opensuse.org/repositories/network:/messaging:/zeromq:/release-draft/Debian_11/amd64/libzmq3-dev_4.3.4-0_amd64.deb: 
 * To build gtest/gmock libraries, run the following:  
 ````
 cd /usr/src/googletest
@@ -26,17 +28,18 @@ cmake --build .
 ````
 
 ## TODO
-* Make publisher threadsafe 
+* ~~Make publisher threadsafe~~ 
 * ~~Make subscriber threadsafe~~
 * Test out inproc transport
 * Compile-time topic generation
+* Proper topic filtering
 * Protobuf payloads
 * ~~Shared context for publishers (and subscribers?)~~
 * Forwarder pattern for publishers
 * Forwarder pattern for subscribers?
-* Complete server and client example
+* ~~Complete server and client example~~
 * Test compilation with aarch64 compiler
-* Teston Kir
+* Test on Kria
 * Tests to add:
   * Multiple publishers + Single subscribers
   * Multiple subscribers + single publishers

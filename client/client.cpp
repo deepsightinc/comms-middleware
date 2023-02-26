@@ -24,8 +24,10 @@ int main(int argc, char** argv) {
         std::exit(0);
     }
 
+    std::cout << "starting client with server IP address: " << ip_option->value() << " port: " << port_option->value() << std::endl;
+
     Comms middleware({});
-    SubscriberPtr subscriber = middleware.CreateSubscriber("test_topic", "127.0.0.1", 5000);
+    SubscriberPtr subscriber = middleware.CreateSubscriber("test_topic", ip_option->value(), port_option->value());
 
     if(subscriber->Init() != Status::OK) {
         std::cout << "Publisher failed to initialize" << std::endl;

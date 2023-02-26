@@ -11,6 +11,8 @@
 
 class Publisher {
 public:
+    virtual ~Publisher() = default;
+
     virtual Status Init() = 0;
     virtual Status Push(std::string msg) = 0;
 };

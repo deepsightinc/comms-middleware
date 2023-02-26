@@ -15,6 +15,8 @@
 
 class Subscriber {
 public:
+    virtual ~Subscriber() = default;
+
     virtual Status Init() = 0;
     virtual std::optional<Message> GetMessage() = 0;
 };

@@ -23,7 +23,9 @@ int main(int argc, char** argv) {
     }
 
     Comms middleware({});
-    PublisherPtr publisher = middleware.CreatePublisher("test_topic", "*", 5000);
+    PublisherPtr publisher = middleware.CreatePublisher("test_topic", ip_option->value(), port_option->value());
+
+    std::cout << "starting server with IP address: " << ip_option->value() << " port: " << port_option->value() << std::endl;
 
     if(publisher->Init() != Status::OK) {
         std::cout << "Publisher failed to initialize" << std::endl;
@@ -32,7 +34,9 @@ int main(int argc, char** argv) {
 
     unsigned messageId = 0;
     while(true) {
+        std::cout << "Writing messageId: " << std::to_string(messageId) << std::endl;
         publisher->Push("message id: " + std::to_string(messageId));
-        std::this_thread::sleep_for(std::chrono::milliseconds{30});
+        std::this_thread::sleep_for(std::chrono::milliseconds{100});
+        messageId++;
     }
 }

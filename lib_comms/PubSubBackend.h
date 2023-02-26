@@ -11,6 +11,8 @@
 
 class PubSubBackend {
 public:
+    virtual ~PubSubBackend() = default;
+    
     virtual Status Init() = 0;
     virtual PublisherPtr CreatePublisher(const Topic& topic, const IpAddress& address, const Port& port) = 0;
     virtual SubscriberPtr CreateSubscriber(const Topic& topic, const IpAddress& address, const Port& port) = 0;

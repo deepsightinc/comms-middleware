@@ -17,10 +17,13 @@ ZmqSubscriber::~ZmqSubscriber() {
 }
 
 Status ZmqSubscriber::Init() {
+    if (m_initialized) {
+        return Status::OK;
+    }
 
     m_subscriberThread = std::thread([this]{SubscriberLoop();});
 
-
+    m_initialized = true;
     return Status::OK;
 }
 
@@ -59,5 +62,10 @@ void ZmqSubscriber::SubscriberLoop() {
 }
 
 std::optional<std::string> ZmqSubscriber::GetMessage() {
+    if (!m_initialized) {
+        std::cout << "Error: Cannot get message from subscriber, subscriber not initialized" << std::endl;
+        return {};
+    }
+
     return m_queue.pop();
 }
