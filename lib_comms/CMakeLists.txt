@@ -1,16 +1,18 @@
 set(HEADER_LIST
         Comms.h
         CommsTypes.h
+        PublisherImpl.h
         Publisher.h
+        SubscriberImpl.h
         Subscriber.h
         PubSubBackend.h
         zmq/ZmqPublisher.h
         zmq/ZmqPubSubBackend.h
         zmq/ZmqSubscriber.h
-        ThreadSafeQueue.h Topics.h)
+        ThreadSafeQueue.h
+        Topics.h)
 
 set(SOURCE_LIST
-        Comms.cpp
         zmq/ZmqPublisher.cpp
         zmq/ZmqSubscriber.cpp
         zmq/ZmqPubSubBackend.cpp)

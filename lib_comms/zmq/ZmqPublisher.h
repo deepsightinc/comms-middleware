@@ -4,7 +4,7 @@
 
 
 #include "CommsTypes.h"
-#include "Publisher.h"
+#include "PublisherImpl.h"
 #include "ThreadSafeQueue.h"
 
 #include <memory>
@@ -16,7 +16,7 @@ namespace zmq {
     class socket_t;
 }
 
-class ZmqPublisher: public Publisher {
+class ZmqPublisher: public PublisherImpl {
 public:
     ZmqPublisher(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
     ~ZmqPublisher() override;

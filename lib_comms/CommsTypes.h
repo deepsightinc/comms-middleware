@@ -11,7 +11,7 @@ enum class Status {
 
 using Message = std::string;
 using Messages = std::vector<Message>;
-using Topic = std::string;
+using TopicName = std::string;
 using IpAddress = std::string;
 using Port = int;
 

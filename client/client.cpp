@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include "Comms.h"
+#include "Topics.h"
 
 #include <popl.h>
 
@@ -27,10 +28,10 @@ int main(int argc, char** argv) {
     std::cout << "starting client with server IP address: " << ip_option->value() << " port: " << port_option->value() << std::endl;
 
     Comms middleware({});
-    SubscriberPtr subscriber = middleware.CreateSubscriber("test_topic", ip_option->value(), port_option->value());
+    auto subscriber = middleware.CreateSubscriber<Topic::BasicTopic>(ip_option->value(), port_option->value());
 
     if(subscriber->Init() != Status::OK) {
-        std::cout << "Publisher failed to initialize" << std::endl;
+        std::cout << "PublisherImpl failed to initialize" << std::endl;
         return 0;
     }
 

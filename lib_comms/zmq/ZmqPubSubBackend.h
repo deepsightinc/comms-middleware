@@ -14,8 +14,9 @@ public:
     ~ZmqPubSubBackend() override = default;
 
     Status Init() override;
-    PublisherPtr CreatePublisher(const Topic& topic, const IpAddress& address, const Port& port) override;
-    SubscriberPtr CreateSubscriber(const Topic& topic, const IpAddress& address, const Port& port) override;
+
+    PublisherImplPtr CreatePublisher(const TopicName& topic, const IpAddress& address, const Port& port) override;
+    SubscriberImplPtr CreateSubscriber(const TopicName& topic, const IpAddress& address, const Port& port) override;
 private:
     std::shared_ptr<zmq::context_t> m_sharedContext;
 };

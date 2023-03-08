@@ -2,7 +2,7 @@
 #define COMMS_MIDDLEWARE_ZMQSUBSCRIBER_H
 
 #include "CommsTypes.h"
-#include "Subscriber.h"
+#include "SubscriberImpl.h"
 #include "ThreadSafeQueue.h"
 
 #include <memory>
@@ -15,7 +15,7 @@ namespace zmq {
     class socket_t;
 }
 
-class ZmqSubscriber: public Subscriber {
+class ZmqSubscriber: public SubscriberImpl {
 public:
     ZmqSubscriber(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
     ~ZmqSubscriber() override;

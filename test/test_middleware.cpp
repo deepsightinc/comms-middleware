@@ -2,8 +2,10 @@
 #include <gtest/gtest.h>
 #include "Comms.h"
 #include <chrono>
+#include "Topics.h"
 #include <thread>
 
+template <typename SubscriberPtr>
 std::optional<std::string> waitForMessage(const SubscriberPtr& subscriber, std::chrono::milliseconds timeout) {
     auto start_time = std::chrono::high_resolution_clock::now();
     auto end_time = std::chrono::high_resolution_clock::now();
@@ -21,10 +23,10 @@ std::optional<std::string> waitForMessage(const SubscriberPtr& subscriber, std::
 TEST(PubSubTest, InitialTest) {
     Comms middleware({});
     middleware.Init();
-    auto publisher = middleware.CreatePublisher("topic", "*", 3000);
+    auto publisher = middleware.CreatePublisher<Topic::BasicTopic>( "*", 3000);
     ASSERT_TRUE(publisher->Init() == Status::OK);
 
-    auto subscriber = middleware.CreateSubscriber("topic","localhost", 3000);
+    auto subscriber = middleware.CreateSubscriber<Topic::BasicTopic>("localhost", 3000);
     ASSERT_TRUE(subscriber->Init() == Status::OK);
 
     std::this_thread::sleep_for(std::chrono::milliseconds{30});

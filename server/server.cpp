@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <popl.h>
+#include "Topics.h"
 #include "Comms.h"
 
 int main(int argc, char** argv) {
@@ -23,12 +24,12 @@ int main(int argc, char** argv) {
     }
 
     Comms middleware({});
-    PublisherPtr publisher = middleware.CreatePublisher("test_topic", ip_option->value(), port_option->value());
+    auto publisher = middleware.CreatePublisher<Topic::BasicTopic>(ip_option->value(), port_option->value());
 
     std::cout << "starting server with IP address: " << ip_option->value() << " port: " << port_option->value() << std::endl;
 
     if(publisher->Init() != Status::OK) {
-        std::cout << "Publisher failed to initialize" << std::endl;
+        std::cout << "PublisherImpl failed to initialize" << std::endl;
         return 0;
     }
 

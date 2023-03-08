@@ -6,11 +6,11 @@
 
 ZmqPubSubBackend::ZmqPubSubBackend() : m_sharedContext(std::make_shared<zmq::context_t>()) {}
 
-SubscriberPtr ZmqPubSubBackend::CreateSubscriber(const Topic& topic, const IpAddress& address, const Port& port) {
+SubscriberImplPtr ZmqPubSubBackend::CreateSubscriber(const TopicName& topic, const IpAddress& address, const Port& port) {
     return std::make_unique<ZmqSubscriber>(address, port, m_sharedContext);
 }
 
-PublisherPtr ZmqPubSubBackend::CreatePublisher(const Topic& topic, const IpAddress& address, const Port& port) {
+PublisherImplPtr ZmqPubSubBackend::CreatePublisher(const TopicName& topic, const IpAddress& address, const Port& port) {
     return std::make_unique<ZmqPublisher>(address, port, m_sharedContext);
 }
 
