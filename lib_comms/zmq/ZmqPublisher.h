@@ -18,7 +18,7 @@ namespace zmq {
 
 class ZmqPublisher: public PublisherImpl {
 public:
-    ZmqPublisher(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
+    ZmqPublisher(TopicName topic, std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
     ~ZmqPublisher() override;
 
     Status Init() override;
@@ -31,6 +31,7 @@ private:
 
     std::string m_ip;
     int m_port;
+    TopicName m_topic;
 
     std::atomic_bool m_cancelThread = false;
     std::thread m_publisherThread;

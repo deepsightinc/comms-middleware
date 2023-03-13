@@ -26,10 +26,10 @@ namespace {
     constexpr std::chrono::milliseconds k_initializeTimeout = std::chrono::milliseconds{1000};
 }
 
-ZmqPublisher::ZmqPublisher(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
+ZmqPublisher::ZmqPublisher(TopicName topic, std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
     m_context(context),
     m_socket(std::make_unique<zmq::socket_t>(*m_context, zmq::socket_type::pub)),
-    m_ip(ipAddress), m_port(port){}
+    m_topic(topic), m_ip(ipAddress), m_port(port){}
 
 ZmqPublisher::~ZmqPublisher() {
     m_cancelThread = true;
@@ -75,16 +75,31 @@ void ZmqPublisher::PublisherLoop() {
             continue;
         }
 
-        const auto result = m_socket->send(zmq::message_t(maybeMsg.value()), zmq::send_flags::none);
-        if (!result.has_value()) {
+        // Send topic string first for subscribers to filter on
+        const auto resultHeader = m_socket->send(zmq::message_t(m_topic), zmq::send_flags::sndmore);
+        if (!resultHeader.has_value()) {
+            std::cout << "Error: Unable to send topic string from message from zmq publisher" << std::endl;
+            continue;
+        }
+
+        if (resultHeader.value() != m_topic.length()) {
+            std::cout << "Error: failed to write expected number of bytes for topic string: " + std::to_string(m_topic.length())
+                         + " actual: "
+                         + std::to_string(resultHeader.value()) << std::endl;
+            continue;
+        }
+        
+        // Send message body next
+        const auto resultMsg = m_socket->send(zmq::message_t(maybeMsg.value()), zmq::send_flags::none);
+        if (!resultMsg.has_value()) {
             std::cout << "Error: Unable to send message from zmq publisher" << std::endl;
             continue;
         }
 
-        if (result.value() != maybeMsg.value().length()) {
+        if (resultMsg.value() != maybeMsg.value().length()) {
             std::cout << "Error: failed to write expected number of bytes: " + std::to_string(maybeMsg.value().length())
                          + " actual: "
-                         + std::to_string(result.value()) << std::endl;
+                         + std::to_string(resultMsg.value()) << std::endl;
             continue;
         }
     }

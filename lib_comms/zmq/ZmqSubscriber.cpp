@@ -7,9 +7,9 @@
 #define ZMQ_HAVE_POLLER 1
 #include "zmq.hpp"
 
-ZmqSubscriber::ZmqSubscriber(std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
+ZmqSubscriber::ZmqSubscriber(TopicName topic, std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
     m_context(context),
-    m_ip(ipAddress), m_port(port){}
+    m_ip(ipAddress), m_port(port), m_topic(topic){}
 
 ZmqSubscriber::~ZmqSubscriber() {
     m_cancelThread = true;
@@ -33,7 +33,7 @@ void ZmqSubscriber::SubscriberLoop() {
     zmq::socket_t socket(*m_context, zmq::socket_type::sub);
     try {
         socket.connect("tcp://" + m_ip + ":" + std::to_string(m_port));
-        socket.set(zmq::sockopt::subscribe, "");
+        socket.set(zmq::sockopt::subscribe, m_topic);
     }
     catch (const zmq::error_t& error) {
         std::cout << "Error: Could not initialize subscriber socket: " << error.what() << std::endl;
@@ -54,6 +54,16 @@ void ZmqSubscriber::SubscriberLoop() {
         }
 
         zmq::message_t newMessage;
+        zmq::message_t newMessageHeader;
+        
+        // receieve topic string first
+        auto socketMsgHeader = in_socket[0].socket.recv(newMessageHeader, zmq::recv_flags::none);
+        if(!socketMsgHeader.has_value()) {
+            std::cout << "Error: Failed to unpack message header from zmq::socket_t::recv" << std::endl;
+            continue;
+        }
+
+        // receieve message body next
         auto socketMsg = in_socket[0].socket.recv(newMessage, zmq::recv_flags::none);
         if(!socketMsg.has_value()) {
             std::cout << "Error: Failed to unpack message from zmq::socket_t::recv" << std::endl;
