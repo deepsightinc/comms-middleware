@@ -18,31 +18,32 @@
 
 class Comms {
 public:
-    using Config = std::unordered_map<std::string, std::string>;
-    
-    Comms(const Config& commsConfiguration) : m_config(commsConfiguration),
-                                                     m_backend(std::make_unique<ZmqPubSubBackend>()){}
+    Comms() : m_ownedBackend(std::make_unique<ZmqPubSubBackend>()),
+        m_backend(*m_ownedBackend){}
+
+    Comms(PubSubBackend& backend) : m_backend(backend){}
+
     Status Init() {
-        return m_backend->Init();
+        return m_backend.Init();
     }
 
     template<typename Topic, typename TopicType = typename Topic::payloadType>
     SubscriberPtr<TopicType> CreateSubscriber( const IpAddress& address, const Port& port) {
-        auto subscriberImpl = m_backend->CreateSubscriber(Topic::GetName(), address, port);
+        auto subscriberImpl = m_backend.CreateSubscriber(Topic::GetName(), address, port);
         SubscriberPtr<TopicType> newSubscriber = std::make_unique<Subscriber<TopicType>>(std::move(subscriberImpl));
         return newSubscriber;
     }
 
     template<typename Topic, typename TopicType = typename Topic::payloadType>
     PublisherPtr<TopicType> CreatePublisher( const IpAddress& address, const Port& port) {
-        auto publisherImpl = m_backend->CreatePublisher(Topic::GetName(), address, port);
+        auto publisherImpl = m_backend.CreatePublisher(Topic::GetName(), address, port);
         PublisherPtr<TopicType> newPublisher = std::make_unique<Publisher<TopicType>>(std::move(publisherImpl));
         return newPublisher;
     }
 
 private:
-    const Config& m_config;
-    PubSubBackendPtr m_backend = nullptr;
+    PubSubBackendPtr m_ownedBackend = nullptr;
+    PubSubBackend& m_backend;
 };
 
 

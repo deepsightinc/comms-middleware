@@ -14,5 +14,7 @@ using Messages = std::vector<Message>;
 using TopicName = std::string;
 using IpAddress = std::string;
 using Port = int;
+using TopicIdentifier = std::tuple<TopicName, IpAddress, Port>;
+
 
 #endif //COMMS_MIDDLEWARE_TYPES_H

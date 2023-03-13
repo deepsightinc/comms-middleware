@@ -33,7 +33,9 @@ ZmqPublisher::ZmqPublisher(std::string ipAddress, int port, std::shared_ptr<zmq:
 
 ZmqPublisher::~ZmqPublisher() {
     m_cancelThread = true;
-    m_publisherThread.join();
+    if(m_publisherThread.joinable()) {
+        m_publisherThread.join();
+    }
 }
 
 Status ZmqPublisher::Init() {
@@ -41,7 +43,7 @@ Status ZmqPublisher::Init() {
 
     std::unique_lock<std::mutex> lg(m_initializeMutex);
     bool successfulInit = m_initializeCv.wait_for(lg, k_initializeTimeout, [this]{
-        std::cout << "testing" << std::endl;
+        //std::cout << "testing" << std::endl;
         return m_initialized.load();
     });
 

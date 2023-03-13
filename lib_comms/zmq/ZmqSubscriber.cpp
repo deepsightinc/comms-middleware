@@ -13,7 +13,9 @@ ZmqSubscriber::ZmqSubscriber(std::string ipAddress, int port, std::shared_ptr<zm
 
 ZmqSubscriber::~ZmqSubscriber() {
     m_cancelThread = true;
-    m_subscriberThread.join();
+    if(m_subscriberThread.joinable()) {
+        m_subscriberThread.join();
+    }
 }
 
 Status ZmqSubscriber::Init() {
