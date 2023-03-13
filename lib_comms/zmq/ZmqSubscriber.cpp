@@ -1,0 +1,83 @@
+
+#include <iostream>
+#include "ZmqSubscriber.h"
+
+// modifications to support polling
+#define ZMQ_BUILD_DRAFT_API 1
+#define ZMQ_HAVE_POLLER 1
+#include "zmq.hpp"
+
+ZmqSubscriber::ZmqSubscriber(TopicName topic, IpAddress ipAddress, Port port, std::shared_ptr<zmq::context_t> context) :
+    m_context(context),
+    m_ip(ipAddress), m_port(port), m_topic(topic){}
+
+ZmqSubscriber::~ZmqSubscriber() {
+    m_cancelThread = true;
+    if(m_subscriberThread.joinable()) {
+        m_subscriberThread.join();
+    }
+}
+
+Status ZmqSubscriber::Init() {
+    if (m_initialized) {
+        return Status::OK;
+    }
+
+    m_subscriberThread = std::thread([this]{SubscriberLoop();});
+
+    m_initialized = true;
+    return Status::OK;
+}
+
+void ZmqSubscriber::SubscriberLoop() {
+    zmq::socket_t socket(*m_context, zmq::socket_type::sub);
+    try {
+        socket.connect("tcp://" + m_ip + ":" + std::to_string(m_port));
+        socket.set(zmq::sockopt::subscribe, m_topic);
+    }
+    catch (const zmq::error_t& error) {
+        std::cout << "Error: Could not initialize subscriber socket: " << error.what() << std::endl;
+        return;
+    }
+
+    zmq::poller_t<> socketPoller;
+    socketPoller.add(socket, zmq::event_flags::pollin);
+    std::chrono::milliseconds pollTimeout{100};
+
+    // can pre allocate size since we are only checking for 1 socket
+    std::vector<decltype(socketPoller)::event_type> in_socket(1);
+
+    while(!m_cancelThread) {
+        const auto poll_res = socketPoller.wait_all(in_socket, pollTimeout);
+        if(!poll_res) {
+            continue;
+        }
+
+        zmq::message_t newMessage;
+        zmq::message_t newMessageHeader;
+        
+        // receieve topic string first
+        auto socketMsgHeader = in_socket[0].socket.recv(newMessageHeader, zmq::recv_flags::none);
+        if(!socketMsgHeader.has_value()) {
+            std::cout << "Error: Failed to unpack message header from zmq::socket_t::recv" << std::endl;
+            continue;
+        }
+
+        // receieve message body next
+        auto socketMsg = in_socket[0].socket.recv(newMessage, zmq::recv_flags::none);
+        if(!socketMsg.has_value()) {
+            std::cout << "Error: Failed to unpack message from zmq::socket_t::recv" << std::endl;
+            continue;
+        }
+        m_queue.push(newMessage.to_string());
+    }
+}
+
+std::optional<std::string> ZmqSubscriber::GetMessage() {
+    if (!m_initialized) {
+        std::cout << "Error: Cannot get message from subscriber, subscriber not initialized" << std::endl;
+        return {};
+    }
+
+    return m_queue.pop();
+}
