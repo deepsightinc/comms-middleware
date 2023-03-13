@@ -4,7 +4,7 @@
 #include <chrono>
 #include "Topics.h"
 #include <thread>
-#include "FakePubSubBackend.h"
+#include "fakes/FakePubSubBackend.h"
 
 namespace {
     constexpr std::chrono::milliseconds k_receiveMessageTimeout = std::chrono::milliseconds{1000};
