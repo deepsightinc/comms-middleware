@@ -44,4 +44,8 @@ cmake --build .
   * ~~Multiple publishers + Single subscribers~~
   * ~~Multiple subscribers + single publishers~~
 
+## Limitations  
+* Current multiple publishers using the same (IP, Port) tuple are not supported.
+Support for this feature is not natively supported in ZeroMQ, and can be added if requirements support it.
+
 

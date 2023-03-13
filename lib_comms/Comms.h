@@ -1,7 +1,3 @@
-//
-// Created by manojv on 2/22/23.
-//
-
 #ifndef COMMS_MIDDLEWARE_COMMS_H
 #define COMMS_MIDDLEWARE_COMMS_H
 
@@ -45,11 +41,5 @@ private:
     PubSubBackendPtr m_ownedBackend = nullptr;
     PubSubBackend& m_backend;
 };
-
-
-
-
-
-
 
 #endif //COMMS_MIDDLEWARE_COMMS_H

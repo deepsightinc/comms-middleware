@@ -26,7 +26,7 @@ namespace {
     constexpr std::chrono::milliseconds k_initializeTimeout = std::chrono::milliseconds{1000};
 }
 
-ZmqPublisher::ZmqPublisher(TopicName topic, std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
+ZmqPublisher::ZmqPublisher(TopicName topic, IpAddress ipAddress, Port port, std::shared_ptr<zmq::context_t> context) :
     m_context(context),
     m_socket(std::make_unique<zmq::socket_t>(*m_context, zmq::socket_type::pub)),
     m_topic(topic), m_ip(ipAddress), m_port(port){}
@@ -43,7 +43,6 @@ Status ZmqPublisher::Init() {
 
     std::unique_lock<std::mutex> lg(m_initializeMutex);
     bool successfulInit = m_initializeCv.wait_for(lg, k_initializeTimeout, [this]{
-        //std::cout << "testing" << std::endl;
         return m_initialized.load();
     });
 
@@ -59,6 +58,7 @@ void ZmqPublisher::PublisherLoop() {
 
         // Even after waiting for a successful bind, the first message will very rarely disappear. This wait ensures that
         // all messages are properly queued up.
+        // TODO: Find better solution for this
         std::this_thread::sleep_for(std::chrono::milliseconds{300});
         bindMon.check_event(100);
     }
@@ -68,14 +68,14 @@ void ZmqPublisher::PublisherLoop() {
     }
 
     while(!m_cancelThread) {
+        // TODO: add a blocking call to threadsafe queue to pull data from queue to avoid repeated thread wakeups.
         auto maybeMsg = m_queue.pop();
         if(!maybeMsg) {
-            // TODO: add a blocking call to pull data from queue to avoid repeated thread wakeups
             std::this_thread::sleep_for(std::chrono::milliseconds{100});
             continue;
         }
 
-        // Send topic string first for subscribers to filter on
+        // Send topic string first for subscribers to filter on.
         const auto resultHeader = m_socket->send(zmq::message_t(m_topic), zmq::send_flags::sndmore);
         if (!resultHeader.has_value()) {
             std::cout << "Error: Unable to send topic string from message from zmq publisher" << std::endl;
@@ -89,7 +89,7 @@ void ZmqPublisher::PublisherLoop() {
             continue;
         }
         
-        // Send message body next
+        // Send message body next.
         const auto resultMsg = m_socket->send(zmq::message_t(maybeMsg.value()), zmq::send_flags::none);
         if (!resultMsg.has_value()) {
             std::cout << "Error: Unable to send message from zmq publisher" << std::endl;

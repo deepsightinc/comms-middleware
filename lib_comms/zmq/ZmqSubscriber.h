@@ -17,7 +17,7 @@ namespace zmq {
 
 class ZmqSubscriber: public SubscriberImpl {
 public:
-    ZmqSubscriber(TopicName topic, std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context);
+    ZmqSubscriber(TopicName topic, IpAddress ipAddress, Port port, std::shared_ptr<zmq::context_t> context);
     ~ZmqSubscriber() override;
 
     Status Init() override;
@@ -26,8 +26,8 @@ private:
     void SubscriberLoop();
 
     std::atomic_bool m_initialized = false;
-    std::string m_ip;
-    int m_port;
+    IpAddress m_ip;
+    Port m_port;
     TopicName m_topic;
 
     std::shared_ptr<zmq::context_t> m_context;

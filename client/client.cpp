@@ -1,7 +1,3 @@
-//
-// Created by manojv on 2/22/23.
-//
-//#include "lib_comms/comms.h"
 #include <thread>
 #include <chrono>
 #include <iostream>
@@ -27,7 +23,7 @@ int main(int argc, char** argv) {
 
     std::cout << "starting client with server IP address: " << ip_option->value() << " port: " << port_option->value() << std::endl;
 
-    Comms middleware({});
+    Comms middleware;
     auto subscriber = middleware.CreateSubscriber<Topic::BasicTopic>(ip_option->value(), port_option->value());
 
     if(subscriber->Init() != Status::OK) {

@@ -25,8 +25,9 @@ void FakePubSubBackend::PushMessageData(TopicIdentifier identifier, std::string 
 
     for(const auto& topicListenersPair : m_pubSubMap) {
         bool topicMatches = (std::get<0>(topicListenersPair.first) == std::get<0>(identifier));
-        bool portMatches = (std::get<2>(topicListenersPair.first) == std::get<2>(identifier));
+        // Server wildcard IP binds to all IPs present on system.
         bool ipMatches = std::get<1>(identifier) == "*" || (std::get<1>(topicListenersPair.first) == std::get<1>(identifier));
+        bool portMatches = (std::get<2>(topicListenersPair.first) == std::get<2>(identifier));
 
         if(!(topicMatches && portMatches && ipMatches)) {
             continue;

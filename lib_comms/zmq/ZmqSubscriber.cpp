@@ -7,7 +7,7 @@
 #define ZMQ_HAVE_POLLER 1
 #include "zmq.hpp"
 
-ZmqSubscriber::ZmqSubscriber(TopicName topic, std::string ipAddress, int port, std::shared_ptr<zmq::context_t> context) :
+ZmqSubscriber::ZmqSubscriber(TopicName topic, IpAddress ipAddress, Port port, std::shared_ptr<zmq::context_t> context) :
     m_context(context),
     m_ip(ipAddress), m_port(port), m_topic(topic){}
 
