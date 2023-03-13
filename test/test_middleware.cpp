@@ -5,13 +5,14 @@
 #include "Topics.h"
 #include <thread>
 #include "fakes/FakePubSubBackend.h"
+#include "testPayload.pb.h"
 
 namespace {
     constexpr std::chrono::milliseconds k_receiveMessageTimeout = std::chrono::milliseconds{1000};
 
 
-    template <typename SubscriberPtr>
-    std::optional<std::string> waitForMessage(const SubscriberPtr& subscriber, std::chrono::milliseconds timeout) {
+    template <typename SubscriberPtr, typename SubscriberPayload = typename SubscriberPtr::element_type::payloadType>
+    std::optional<SubscriberPayload> waitForMessage(const SubscriberPtr& subscriber, std::chrono::milliseconds timeout) {
         auto start_time = std::chrono::high_resolution_clock::now();
         auto end_time = std::chrono::high_resolution_clock::now();
 
@@ -27,8 +28,8 @@ namespace {
         return {};
     }
 
-    template <typename SubscriberPtr>
-    std::optional<std::string> waitForMessage(const SubscriberPtr& subscriber) {
+    template <typename SubscriberPtr, typename SubscriberPayload = typename SubscriberPtr::element_type::payloadType>
+    std::optional<SubscriberPayload> waitForMessage(const SubscriberPtr& subscriber) {
         return waitForMessage(subscriber, k_receiveMessageTimeout);
     }
 
@@ -37,6 +38,14 @@ namespace {
 
         static std::string GetName() {
             return "TestTopic";
+        }
+    };
+
+    struct ProtoTopic {
+        using payloadType = TestPayload;
+
+        static std::string GetName() {
+            return "ProtoTopic";
         }
     };
 }
@@ -135,9 +144,22 @@ TEST_F(PubSubTest, TopicFiltering) {
     ASSERT_EQ("hello world", some_msg2.value());
 }
 
+TEST_F(PubSubTest, ProtoPayload) {
+    auto publisher = m_middleware.CreatePublisher<ProtoTopic>( "*", 3000);
+    ASSERT_EQ(publisher->Init(), Status::OK);
 
-// TODO verify topic filtering
-// Test basic protobuf handling
+    auto subscriber = m_middleware.CreateSubscriber<ProtoTopic>("localhost", 3000);
+    ASSERT_EQ(subscriber->Init(), Status::OK);
+
+    TestPayload payload;
+    payload.set_message("testing protobufs");
+    ASSERT_EQ(publisher->Push(payload), Status::OK);
+
+    auto some_msg = waitForMessage(subscriber);
+
+    ASSERT_TRUE(some_msg);
+    ASSERT_EQ("testing protobufs", some_msg.value().message());
+}
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);

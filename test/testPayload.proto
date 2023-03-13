@@ -1,0 +1,5 @@
+syntax = 'proto2';
+
+message TestPayload {
+  optional string message = 1;
+}

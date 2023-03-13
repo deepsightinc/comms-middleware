@@ -26,9 +26,13 @@ public:
             if constexpr(std::is_same<Payload, std::string>::value) {
                 serializedMessage = msg;
             } else {
-                serializedMessage = msg.ToString();
+                bool successfulSerialization = msg.SerializeToString(&serializedMessage);
+                if(!successfulSerialization) {
+                    std::cout << "Could not serialize message to string" << std::endl;
+                    return Status::ERR;
+                }
             }
-            return m_impl->Push(msg);
+            return m_impl->Push(serializedMessage);
     };
 private:
     PublisherImplPtr m_impl;

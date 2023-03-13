@@ -16,6 +16,8 @@
 template<typename Payload>
 class Subscriber {
 public:
+    using payloadType = Payload;
+
     Subscriber(SubscriberImplPtr&& impl) : m_impl(std::move(impl)) {}
 
     Status Init() {
@@ -25,7 +27,7 @@ public:
     std::optional<Payload> GetMessage() {
         auto maybeMessage = m_impl->GetMessage();
         if(!maybeMessage) {
-            return maybeMessage;
+            return {};
         }
 
         Payload message;

@@ -33,7 +33,7 @@ cmake --build .
 * Test out inproc transport (defer for later)
 * ~~Compile-time topic generation~~
 * ~~Proper topic filtering~~
-* Protobuf payloads
+* ~~Protobuf payloads~~
 * ~~Shared context for publishers (and subscribers?)~~
 * Forwarder pattern for publishers (defer for later)
 * ~~Fake for test~~
