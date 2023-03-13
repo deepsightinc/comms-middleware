@@ -9,7 +9,7 @@ example client and server that uses the library to communicate.
 ### Prerequisites  
 * Host machine must run Ubuntu 22.04 and have a compiler supporting C++17  
 * Install the necessary packages:
-`sudo apt-get install googletest`
+`sudo apt-get install googletest protobuf-compiler`
   * Download and install ZMQ package here:
   https://mirrorcache-us.opensuse.org/repositories/network:/messaging:/zeromq:/release-draft/Debian_11/amd64/libzmq3-dev_4.3.4-0_amd64.deb: 
 * To build gtest/gmock libraries, run the following:  
