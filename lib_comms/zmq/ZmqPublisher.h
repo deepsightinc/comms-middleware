@@ -26,7 +26,8 @@ public:
 private:
     void PublisherLoop();
     std::atomic_bool m_initialized = false;
-
+    std::mutex m_initializeMutex;
+    std::condition_variable m_initializeCv;
 
     std::string m_ip;
     int m_port;

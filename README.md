@@ -31,15 +31,15 @@ cmake --build .
 * ~~Make publisher threadsafe~~ 
 * ~~Make subscriber threadsafe~~
 * Test out inproc transport
-* Compile-time topic generation
+* ~~Compile-time topic generation~~
 * Proper topic filtering
 * Protobuf payloads
 * ~~Shared context for publishers (and subscribers?)~~
 * Forwarder pattern for publishers
-* Forwarder pattern for subscribers?
+* Fake for test
 * ~~Complete server and client example~~
-* Test compilation with aarch64 compiler
-* Test on Kria
+* ~~Test compilation with aarch64 compiler~~
+* ~~Test on Kria~~
 * Tests to add:
   * Multiple publishers + Single subscribers
   * Multiple subscribers + single publishers
